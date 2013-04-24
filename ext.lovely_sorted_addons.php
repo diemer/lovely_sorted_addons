@@ -172,7 +172,7 @@ function rewrite_extensions_html($markup)
 		$doc['#enabledExtensions thead tr']->append('<th class="header">Settings</th>');
 		$doc['#enabledExtensions thead tr']->append('<th class="header">Documentation</th>');
 		$doc['#enabledExtensions thead tr']->append('<th class="header">Version</th>');
-		$doc['#enabledExtensions thead tr']->append('<th class="header">Action</th>');
+		$doc['#enabledExtensions thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
 	$doc['#enabledExtensions']->append('<tbody></tbody>');
 	$doc['.pageContents']->append('<table class="mainTable" id="disabledExtensions" border="0" cellspacing="0" cellpadding="0"></table>');
 	$doc['#disabledExtensions']->append('<tbody></tbody>');
@@ -182,10 +182,9 @@ function rewrite_extensions_html($markup)
 		$doc['#disabledExtensions thead tr']->append('<th class="header">Settings</th>');
 		$doc['#disabledExtensions thead tr']->append('<th class="header">Documentation</th>');
 		$doc['#disabledExtensions thead tr']->append('<th class="header">Version</th>');
-		$doc['#disabledExtensions thead tr']->append('<th class="header">Action</th>');
+		$doc['#disabledExtensions thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
 	$disPtrn = array('Disabled (','e?','>)');	
 	$disRepl = array('','e','>');
-	$enabledPattern = array('Enabled (');	
 	$enPtrn = array('Enabled (','e?','>)');	
 	$enRepl = array('','e','>');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
@@ -214,7 +213,7 @@ function rewrite_modules_html($markup)
 		$doc['#enabledModules thead tr']->append('<th class="header">Enabled Module Name</th>');
 		$doc['#enabledModules thead tr']->append('<th class="header">Documentation</th>');
 		$doc['#enabledModules thead tr']->append('<th class="header">Version</th>');
-		$doc['#enabledModules thead tr']->append('<th class="header">Action</th>');
+		$doc['#enabledModules thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
 	$doc['#enabledModules']->append('<tbody></tbody>');
 	$doc['.pageContents']->append('<table class="mainTable" id="disabledModules" border="0" cellspacing="0" cellpadding="0"></table>');
 	$doc['#disabledModules']->append('<tbody></tbody>');
@@ -223,12 +222,11 @@ function rewrite_modules_html($markup)
 		$doc['#disabledModules thead tr']->append('<th class="header">Disabled Module Name</th>');
 		$doc['#disabledModules thead tr']->append('<th class="header">Documentation</th>');
 		$doc['#disabledModules thead tr']->append('<th class="header">Version</th>');
-		$doc['#disabledModules thead tr']->append('<th class="header">Action</th>');
-	$disPtrn = array('Disabled (','e?','>)');	
-	$disRepl = array('','e','>');
-	$enabledPattern = array('Enabled (');	
-	$enPtrn = array('Enabled (','e?','>)');	
-	$enRepl = array('','e','>');
+		$doc['#disabledModules thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
+	$disPtrn = array('>Install');	
+	$disRepl = array('>Enable');
+	$enPtrn = array('>Remove');	
+	$enRepl = array('>Disable');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		pq($tr)->find('td:nth-child(4)')->remove();
 		switch (substr(pq($tr)->find('td:nth-child(4) a')->html(),0,1)){
@@ -252,7 +250,7 @@ function rewrite_fieldtypes_html($markup)
 	$doc['#enabledFieldtypes thead']->append('<tr class="even"></tr>');
 		$doc['#enabledFieldtypes thead tr']->append('<th class="header">Enabled Fieldtype Name</th>');
 		$doc['#enabledFieldtypes thead tr']->append('<th class="header">Version</th>');
-		$doc['#enabledFieldtypes thead tr']->append('<th class="header">Action</th>');
+		$doc['#enabledFieldtypes thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
 	$doc['#enabledFieldtypes']->append('<tbody></tbody>');
 	$doc['.pageContents']->append('<table class="mainTable" id="disabledFieldtypes" border="0" cellspacing="0" cellpadding="0"></table>');
 	$doc['#disabledFieldtypes']->append('<tbody></tbody>');
@@ -260,12 +258,11 @@ function rewrite_fieldtypes_html($markup)
 	$doc['#disabledFieldtypes thead']->append('<tr class="even"></tr>');
 		$doc['#disabledFieldtypes thead tr']->append('<th class="header">Disabled Fieldtype Name</th>');
 		$doc['#disabledFieldtypes thead tr']->append('<th class="header">Version</th>');
-		$doc['#disabledFieldtypes thead tr']->append('<th class="header">Action</th>');
-	$disPtrn = array('Disabled (','e?','>)');	
-	$disRepl = array('','e','>');
-	$enabledPattern = array('Enabled (');	
-	$enPtrn = array('Enabled (','e?','>)');	
-	$enRepl = array('','e','>');
+		$doc['#disabledFieldtypes thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
+	$disPtrn = array('>Install');	
+	$disRepl = array('>Enable');
+	$enPtrn = array('>Uninstall');	
+	$enRepl = array('>Disable');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		pq($tr)->find('td:nth-child(3)')->remove();
 		switch (substr(pq($tr)->find('td:nth-child(3) a')->html(),0,1)){
@@ -290,19 +287,18 @@ function rewrite_accessories_html($markup)
 		$doc['#enabledAccessories thead tr']->append('<th class="header">Enabled Accessory Name</th>');
 		$doc['#enabledAccessories thead tr']->append('<th class="header">Available to Member Groups</th>');
 		$doc['#enabledAccessories thead tr']->append('<th class="header">Specific Page?</th>');
-		$doc['#enabledAccessories thead tr']->append('<th class="header">Action</th>');
+		$doc['#enabledAccessories thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
 	$doc['#enabledAccessories']->append('<tbody></tbody>');
 	$doc['.pageContents']->append('<table class="mainTable" id="disabledAccessories" border="0" cellspacing="0" cellpadding="0"></table>');
 	$doc['#disabledAccessories']->append('<tbody></tbody>');
 	$doc['#disabledAccessories']->append('<thead></thead>');
 	$doc['#disabledAccessories thead']->append('<tr class="even"></tr>');
 		$doc['#disabledAccessories thead tr']->append('<th class="header">Disabled Accessory Name</th>');
-		$doc['#disabledAccessories thead tr']->append('<th class="header">Action</th>');
-	$disPtrn = array('Disabled (','e?','>)');	
-	$disRepl = array('','e','>');
-	$enabledPattern = array('Enabled (');	
-	$enPtrn = array('Enabled (','e?','>)');	
-	$enRepl = array('','e','>');
+		$doc['#disabledAccessories thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
+	$disPtrn = array('>Install');	
+	$disRepl = array('>Enable');
+	$enPtrn = array('>Uninstall');	
+	$enRepl = array('>Disable');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		switch (substr(pq($tr)->find('td:nth-child(4) a')->html(),0,1)){
 			case 'I':
