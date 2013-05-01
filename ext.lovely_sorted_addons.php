@@ -137,28 +137,31 @@ function exit_callback()
 	
 	$out = ob_get_contents();
 	ob_end_clean();
-	switch($EE->input->get('C')) {
-		case 'addons_extensions':
-			echo rewrite_extensions_html($out);
-			break;
+	if(!$EE->input->get('M')){
+		switch($EE->input->get('C')) {
+			case 'addons_extensions':
+				echo rewrite_extensions_html($out);
+				break;
 
-		case 'addons_modules':
-			echo rewrite_modules_html($out);
-			break;
+			case 'addons_modules':
+				echo rewrite_modules_html($out);
+				break;
 
-		case 'addons_fieldtypes':
-			echo rewrite_fieldtypes_html($out);
-			break;
+			case 'addons_fieldtypes':
+				echo rewrite_fieldtypes_html($out);
+				break;
 
-		case 'addons_accessories':
-			echo rewrite_accessories_html($out);
-			break;
+			case 'addons_accessories':
+				echo rewrite_accessories_html($out);
+				break;
 
-		default:
-			echo $out;
-			break;
-	}
-
+			default:
+				echo $out;
+				break;
+		}
+	} else {
+		echo $out;
+	}	
 }
 
 
