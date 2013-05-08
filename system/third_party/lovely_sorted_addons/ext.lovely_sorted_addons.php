@@ -10,7 +10,7 @@ class Lovely_sorted_addons_ext {
 	public $description		= LOVELY_SORTED_ADDONS_DESCRIPTION; 
 	public $docs_url		= LOVELY_SORTED_ADDONS_DOCS;
 	public $name			= LOVELY_SORTED_ADDONS_NAME;
-	public $settings_exist	= 'y';
+	public $settings_exist	= 'n';
 	public $version			= LOVELY_SORTED_ADDONS_VERSION;
 	
 	private $EE;
