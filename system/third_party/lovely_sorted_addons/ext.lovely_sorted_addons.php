@@ -136,7 +136,7 @@ function exit_callback()
 	$EE =& get_instance();
 	
 	$out = ob_get_contents();
-	ob_end_clean();
+	if (ob_get_length() > 0) ob_end_clean();
 	if(!$EE->input->get('M')){
 		switch($EE->input->get('C')) {
 			case 'addons_extensions':
