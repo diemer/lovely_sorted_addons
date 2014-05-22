@@ -5,16 +5,16 @@ include(PATH_THIRD.'/lovely_sorted_addons/config.php');
 require PATH_THIRD.'/lovely_sorted_addons/lib/phpQuery.php';
 
 class Lovely_sorted_addons_ext {
-	
+
 	public $settings 		= array();
-	public $description		= LOVELY_SORTED_ADDONS_DESCRIPTION; 
+	public $description		= LOVELY_SORTED_ADDONS_DESCRIPTION;
 	public $docs_url		= LOVELY_SORTED_ADDONS_DOCS;
 	public $name			= LOVELY_SORTED_ADDONS_NAME;
 	public $settings_exist	= 'n';
 	public $version			= LOVELY_SORTED_ADDONS_VERSION;
-	
+
 	private $EE;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -25,15 +25,15 @@ class Lovely_sorted_addons_ext {
 		$this->EE =& get_instance();
 		$this->settings = $settings;
 	}
-	
+
 	// ----------------------------------------------------------------------
-	
+
 	/**
 	 * Settings Form
 	 *
 	 * If you wish for ExpressionEngine to automatically create your settings
 	 * page, work in this method.  If you wish to have fine-grained control
-	 * over your form, use the settings_form() and save_settings() methods 
+	 * over your form, use the settings_form() and save_settings() methods
 	 * instead, and delete this one.
 	 *
 	 * @see http://expressionengine.com/user_guide/development/extensions.html#settings
@@ -41,12 +41,12 @@ class Lovely_sorted_addons_ext {
 	public function settings()
 	{
 		return array(
-			
+
 		);
 	}
-	
+
 	// ----------------------------------------------------------------------
-	
+
 	/**
 	 * Activate Extension
 	 *
@@ -61,7 +61,7 @@ class Lovely_sorted_addons_ext {
 	{
 		// Setup custom settings in this array.
 		$this->settings = array();
-		
+
 		$data = array(
 			'class'		=> __CLASS__,
 			'method'	=> 'rewrite_cp_source',
@@ -71,17 +71,17 @@ class Lovely_sorted_addons_ext {
 			'enabled'	=> 'y'
 		);
 
-		$this->EE->db->insert('extensions', $data);			
-		
-	}	
+		$this->EE->db->insert('extensions', $data);
+
+	}
 
 	// ----------------------------------------------------------------------
-	
+
 	/**
 	 * rewrite_cp_source
 	 *
-	 * @param 
-	 * @return 
+	 * @param
+	 * @return
 	 */
 	public function rewrite_cp_source()
 	{
@@ -125,8 +125,8 @@ class Lovely_sorted_addons_ext {
 		{
 			return FALSE;
 		}
-	}	
-	
+	}
+
 	// ----------------------------------------------------------------------
 }
 
@@ -134,7 +134,7 @@ class Lovely_sorted_addons_ext {
 function exit_callback()
 {
 	$EE =& get_instance();
-	
+
 	$out = ob_get_contents();
 	if (ob_get_length() > 0) ob_end_clean();
 	if(!$EE->input->get('M')){
@@ -161,11 +161,20 @@ function exit_callback()
 		}
 	} else {
 		echo $out;
-	}	
+	}
 }
 
+// Check which EE version we are using, so that the html is re-written correctly
+function rewrite_extensions_html($markup){
+	if (APP_VER >= '2.8.0')
+	{
+	  return rewrite_extensions_html_28($markup);
+	} else {
+		return rewrite_extensions_html_27($markup);
+	}
+}
 
-function rewrite_extensions_html($markup)
+function rewrite_extensions_html_27($markup)
 {
 	$doc = phpQuery::newDocumentHTML($markup);
 	$doc['.pageContents']->append('<table class="mainTable" id="enabledExtensions" border="0" cellspacing="0" cellpadding="0"></table>');
@@ -186,9 +195,9 @@ function rewrite_extensions_html($markup)
 		$doc['#disabledExtensions thead tr']->append('<th class="header">Documentation</th>');
 		$doc['#disabledExtensions thead tr']->append('<th class="header">Version</th>');
 		$doc['#disabledExtensions thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
-	$disPtrn = array('Disabled (','e?','>)');	
+	$disPtrn = array('Disabled (','e?','>)');
 	$disRepl = array('','e','>');
-	$enPtrn = array('Enabled (','e?','>)');	
+	$enPtrn = array('Enabled (','e?','>)');
 	$enRepl = array('','e','>');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		switch (substr(pq($tr)->find('td:nth-child(5)')->html(),0,1)){
@@ -197,6 +206,53 @@ function rewrite_extensions_html($markup)
 				$doc['#disabledExtensions tbody']->append('<tr>'.str_replace($disPtrn,$disRepl,pq($tr)->html()).'</tr>');
 				break;
 			case 'E':
+				pq($tr)->find('td:nth-child(5) a')->addClass('less_important_link');
+				pq($tr)->find('td:nth-child(5) a')->attr('title','Remove');
+				$doc['#enabledExtensions tbody']->append('<tr>'.str_replace($enPtrn,$enRepl,pq($tr)->html()).'</tr>');
+				break;
+		}
+	}
+	$doc['.mainTable:first']->remove();
+	return $doc;
+}
+
+
+function rewrite_extensions_html_28($markup)
+{
+	$doc = phpQuery::newDocumentHTML($markup);
+	$doc['.pageContents']->append('<table class="mainTable" id="enabledExtensions" border="0" cellspacing="0" cellpadding="0"></table>');
+	$doc['#enabledExtensions']->append('<thead></thead>');
+	$doc['#enabledExtensions thead']->append('<tr class="even"></tr>');
+		$doc['#enabledExtensions thead tr']->append('<th class="header">Enabled Extension Name</th>');
+		$doc['#enabledExtensions thead tr']->append('<th class="header">Settings</th>');
+		$doc['#enabledExtensions thead tr']->append('<th class="header">Documentation</th>');
+		$doc['#enabledExtensions thead tr']->append('<th class="header">Version</th>');
+		//$doc['#enabledExtensions thead tr']->append('<th class="header">Status</th>');
+		$doc['#enabledExtensions thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
+	$doc['#enabledExtensions']->append('<tbody></tbody>');
+	$doc['.pageContents']->append('<table class="mainTable" id="disabledExtensions" border="0" cellspacing="0" cellpadding="0"></table>');
+	$doc['#disabledExtensions']->append('<tbody></tbody>');
+	$doc['#disabledExtensions']->append('<thead></thead>');
+	$doc['#disabledExtensions thead']->append('<tr class="even"></tr>');
+		$doc['#disabledExtensions thead tr']->append('<th class="header">Disabled Extension Name</th>');
+		$doc['#disabledExtensions thead tr']->append('<th class="header">Settings</th>');
+		$doc['#disabledExtensions thead tr']->append('<th class="header">Documentation</th>');
+		$doc['#disabledExtensions thead tr']->append('<th class="header">Version</th>');
+	//	$doc['#disabledExtensions thead tr']->append('<th class="header">Status</th>');
+		$doc['#disabledExtensions thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
+	$disPtrn = array('Disabled (','e?','>)');
+	$disRepl = array('','e','>');
+	$enPtrn = array('Enabled (','e?','>)');
+	$enRepl = array('','e','>');
+	foreach($doc['.mainTable tbody tr'] as $tr) {
+		switch (substr(pq($tr)->find('td:nth-child(5) span')->html(),0,1)){
+			case 'U':
+				pq($tr)->find('td:nth-child(5)')->remove();
+				pq($tr)->find('td:nth-child(5) a')->addClass('less_important_link');
+				$doc['#disabledExtensions tbody']->append('<tr>'.str_replace($disPtrn,$disRepl,pq($tr)->html()).'</tr>');
+				break;
+			case 'I':
+				pq($tr)->find('td:nth-child(5)')->remove();
 				pq($tr)->find('td:nth-child(5) a')->addClass('less_important_link');
 				pq($tr)->find('td:nth-child(5) a')->attr('title','Remove');
 				$doc['#enabledExtensions tbody']->append('<tr>'.str_replace($enPtrn,$enRepl,pq($tr)->html()).'</tr>');
@@ -226,9 +282,9 @@ function rewrite_modules_html($markup)
 		$doc['#disabledModules thead tr']->append('<th class="header">Documentation</th>');
 		$doc['#disabledModules thead tr']->append('<th class="header">Version</th>');
 		$doc['#disabledModules thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
-	$disPtrn = array('>Install');	
+	$disPtrn = array('>Install');
 	$disRepl = array('>Enable');
-	$enPtrn = array('>Remove');	
+	$enPtrn = array('>Remove');
 	$enRepl = array('>Disable');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		pq($tr)->find('td:nth-child(4)')->remove();
@@ -262,9 +318,9 @@ function rewrite_fieldtypes_html($markup)
 		$doc['#disabledFieldtypes thead tr']->append('<th class="header">Disabled Fieldtype Name</th>');
 		$doc['#disabledFieldtypes thead tr']->append('<th class="header">Version</th>');
 		$doc['#disabledFieldtypes thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
-	$disPtrn = array('>Install');	
+	$disPtrn = array('>Install');
 	$disRepl = array('>Enable');
-	$enPtrn = array('>Uninstall');	
+	$enPtrn = array('>Uninstall');
 	$enRepl = array('>Disable');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		pq($tr)->find('td:nth-child(3)')->remove();
@@ -298,9 +354,9 @@ function rewrite_accessories_html($markup)
 	$doc['#disabledAccessories thead']->append('<tr class="even"></tr>');
 		$doc['#disabledAccessories thead tr']->append('<th class="header">Disabled Accessory Name</th>');
 		$doc['#disabledAccessories thead tr']->append('<th class="header" style="width: 126px;">Action</th>');
-	$disPtrn = array('>Install');	
+	$disPtrn = array('>Install');
 	$disRepl = array('>Enable');
-	$enPtrn = array('>Uninstall');	
+	$enPtrn = array('>Uninstall');
 	$enRepl = array('>Disable');
 	foreach($doc['.mainTable tbody tr'] as $tr) {
 		switch (substr(pq($tr)->find('td:nth-child(4) a')->html(),0,1)){
